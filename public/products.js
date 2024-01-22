@@ -3,7 +3,7 @@ import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 let productModal = null;
 let delproductModal = null;
 
-const app = {
+const app = createApp({
     data(){
     return{
         api_url: "https://ec-course-api.hexschool.io/v2",
@@ -12,6 +12,7 @@ const app = {
         temp : {
             imagesUrl: [],
         }, // 用於儲存 "查看細節" Data
+        pagination: {},
         new_image: false
         }
     },
@@ -36,16 +37,16 @@ const app = {
             axios.post(api).then((res) => {
                 this.getData()
             }).catch((err) => {
-                console.dir(err.data.message);
+                alert(err.data.message);
                 window.location = 'login.html';
             })
         },
         getData(){
             const api = `${this.api_url}/api/${this.api_path}/admin/products?page=1`;
             axios.get(api).then((res) => {
-                const { products } = res.data;
+                const { products, pagination } = res.data;
                 this.products = products;
-                console.dir(this.products);
+                this.pagination = pagination;
             }).catch((err) => {
                 alert(err.data.message);
             })
@@ -104,6 +105,7 @@ const app = {
             })
         },
         ShowImagebtn(temp){
+            console.log('OK2')
             if (!temp.hasOwnProperty('imagesUrl') && !Array.isArray(temp.imagesUrl)) {
                 temp.imagesUrl = [];
                 temp.imagesUrl.push('');
@@ -111,8 +113,33 @@ const app = {
             return true;
         }
     },
-    
-    
-}
+});
 
-Vue.createApp(app).mount('#app');
+// app.component('pagination', {
+//     template: '#pagination'
+// });
+
+app.component('productModal', {
+    template: '#productModal',
+    props:['temp'],
+    methods:{
+        update_product(id){
+            this.$emit('update_product', id)
+        },
+        showImage(temp){
+            this.$emit('ShowImagebtn', temp)
+        }
+    }
+});
+
+app.component('delProductModal', {
+    template: '#delProductModal',
+    props:['temp'],
+    methods:{
+        delproduct(id){
+            this.$emit('delproduct', id)
+        }
+    }
+});
+
+app.mount('#app');
