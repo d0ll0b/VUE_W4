@@ -38,7 +38,7 @@ const app = createApp({
                 this.getData()
             }).catch((err) => {
                 alert(err.data.message);
-                window.location = 'login.html';
+                window.location = 'index.html';
             })
         },
         getData(page = 2){
