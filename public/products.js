@@ -41,8 +41,8 @@ const app = createApp({
                 window.location = 'login.html';
             })
         },
-        getData(){
-            const api = `${this.api_url}/api/${this.api_path}/admin/products?page=1`;
+        getData(page = 2){
+            const api = `${this.api_url}/api/${this.api_path}/admin/products?page=${page}`;
             axios.get(api).then((res) => {
                 const { products, pagination } = res.data;
                 this.products = products;
@@ -63,6 +63,7 @@ const app = createApp({
                 case 'edit': 
                     this.new_image = false;
                     this.temp = { ...item };
+                    this.ShowImagebtn(this.temp);
                     productModal.show();
                     break;
                 case 'delete': 
@@ -105,7 +106,6 @@ const app = createApp({
             })
         },
         ShowImagebtn(temp){
-            console.log('OK2')
             if (!temp.hasOwnProperty('imagesUrl') && !Array.isArray(temp.imagesUrl)) {
                 temp.imagesUrl = [];
                 temp.imagesUrl.push('');
@@ -115,9 +115,15 @@ const app = createApp({
     },
 });
 
-// app.component('pagination', {
-//     template: '#pagination'
-// });
+app.component('pagination', {
+    template: '#pagination',
+    props:['pagination'],
+    methods:{
+        changePage(page){
+            this.$emit('changePage', page)
+        }
+    }
+});
 
 app.component('productModal', {
     template: '#productModal',
