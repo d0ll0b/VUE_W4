@@ -13,8 +13,9 @@ const app = createApp({
             imagesUrl: [],
         }, // 用於儲存 "查看細節" Data
         pagination: {},
-        new_image: false
-        }
+        isNew: false,
+        title: ""
+    }
     },
     mounted(){
         productModal = new bootstrap.Modal(document.querySelector('#productModal'),{
@@ -54,16 +55,18 @@ const app = createApp({
         show_Model(flg, item){
             switch(flg){
                 case 'new': 
-                    this.new_image = true;
+                    this.isNew = true;
                     this.temp = {
                         imagesUrl: [],
                     };
+                    this.title = "新增";
                     productModal.show();
                     break;
                 case 'edit': 
-                    this.new_image = false;
+                    this.isNew = false;
                     this.temp = { ...item };
                     this.ShowImagebtn(this.temp);
+                    this.title = "編輯";
                     productModal.show();
                     break;
                 case 'delete': 
@@ -74,7 +77,7 @@ const app = createApp({
         },
         Update_product(id){
             let api = '';
-            if(this.new_image === true){
+            if(this.isNew === true){
                 api = `${this.api_url}/api/${this.api_path}/admin/product`;
                 axios.post(api, { data: this.temp }).then((res) => {
                     alert('新增產品成功!!!');
@@ -127,7 +130,7 @@ app.component('pagination', {
 
 app.component('productModal', {
     template: '#productModal',
-    props:['temp'],
+    props:['temp', 'title'],
     methods:{
         update_product(id){
             this.$emit('update_product', id)

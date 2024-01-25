@@ -87,7 +87,7 @@
         <!-- Pagination -->
       </div>
       <!-- productModal -->
-      <product-modal :temp="temp" @update_product="Update_product" @show_image="ShowImagebtn"></product-modal>
+      <product-modal :temp="temp" :title="title" @update_product="Update_product" @show_image="ShowImagebtn"></product-modal>
       <!-- productModal -->
 
       <!-- delProductModal -->
@@ -125,7 +125,7 @@
           <div class="modal-content border-0">
             <div class="modal-header bg-dark text-white">
               <h5 id="productModalLabel" class="modal-title">
-                <span>新增產品</span>
+                <span>{{ title }}產品</span>
               </h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -135,12 +135,12 @@
                   <div class="mb-2">
                     <div class="mb-3">
                       <label for="imageUrl" class="form-label text-success h5 font-weight-bold ">主圖</label>
-                      <input type="text" class="form-control"
+                      <input type="text" class="form-control" id="imageUrl"
                              placeholder="請輸入圖片連結" v-model="temp.imageUrl">
                     </div>
                     <div class="mb-3" v-for="(image, key) in temp.imagesUrl" :key="key">
-                      <label for="imageUrl" class="form-label">附圖{{ key+1 }}</label>
-                      <input type="text" class="form-control"
+                      <label :for="'imagesUrl_'+key" class="form-label">附圖{{ key+1 }}</label>
+                      <input type="text" class="form-control" :id="'imagesUrl_'+key"
                              placeholder="請輸入圖片連結" v-model="temp.imagesUrl[key]">
                     </div>
                     <img class="img-fluid" :src="temp.imageUrl" alt="">
@@ -173,12 +173,12 @@
                   <div class="row">
                     <div class="mb-3 col-md-6">
                       <label for="origin_price" class="form-label">原價</label>
-                      <input id="origin_price" type="number" min="0" class="form-control" placeholder="請輸入原價" v-model="temp.origin_price">
+                      <input id="origin_price" type="number" min="0" class="form-control" placeholder="請輸入原價" v-model.number="temp.origin_price">
                     </div>
                     <div class="mb-3 col-md-6">
                       <label for="price" class="form-label">售價</label>
                       <input id="price" type="number" min="0" class="form-control"
-                             placeholder="請輸入售價" v-model="temp.price">
+                             placeholder="請輸入售價" v-model.number="temp.price">
                     </div>
                   </div>
                   <hr>
