@@ -66,32 +66,15 @@
         </table>
 
         <!-- Pagination -->
-        <!-- <nav aria-label="Page navigation">
-            <ul class="pagination">
-              <li class="page-item" :class="{ 'disabled' : pagination.current_page === 1 }">
-                <a class="page-link" href="#" aria-label="Previous">
-                  <span aria-hidden="true">&laquo;</span>
-                </a>
-              </li>
-              <li class="page-item" v-for="(item, key) in pagination.total_pages" :key="key" :class="{ 'active' : pagination.current_page === item }">
-                <a class="page-link" href="#">{{ item }}</a>
-              </li>
-              <li class="page-item" :class="{ 'disabled' : pagination.total_pages === pagination.current_page }">
-                <a class="page-link" href="#" aria-label="Next">
-                  <span aria-hidden="true">&raquo;</span> 
-                </a>
-              </li>
-            </ul>
-        </nav> -->
         <pagination :pagination="pagination" @change_page="getData"></pagination>
         <!-- Pagination -->
       </div>
       <!-- productModal -->
-      <product-modal :temp="temp" :title="title" @update_product="Update_product" @show_image="ShowImagebtn"></product-modal>
+      <product-modal :temp-product="tempProduct" :title="title" @update_product="Update_product" @show_image="ShowImagebtn"></product-modal>
       <!-- productModal -->
 
       <!-- delProductModal -->
-      <del-product-modal :temp="temp" @delproduct="Delete_product"></del-product-modal>
+      <del-product-modal :temp-product="tempProduct" @delproduct="Delete_product"></del-product-modal>
       <!-- delProductModal -->
     </div>
 
@@ -100,15 +83,15 @@
       <nav aria-label="Page navigation">
         <ul class="pagination">
             <li class="page-item" :class="{ 'disabled' : pagination.current_page === 1 }">
-                <a class="page-link" href="#" aria-label="Previous" @click="changePage(pagination.current_page - 1)">
+                <a class="page-link" href="#" aria-label="Previous" @click.prevent="changePage(pagination.current_page - 1)">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
             <li class="page-item" v-for="(item, key) in pagination.total_pages" :key="key" :class="{ 'active' : pagination.current_page === item }">
-                <a class="page-link" href="#" @click="changePage(item)">{{ item }}</a>
+                <a class="page-link" href="#" @click.prevent="changePage(item)">{{ item }}</a>
             </li>
             <li class="page-item" :class="{ 'disabled' : pagination.total_pages === pagination.current_page }">
-                <a class="page-link" href="#" aria-label="Next" @click="changePage(pagination.current_page + 1)">
+                <a class="page-link" href="#" aria-label="Next" @click.prevent="changePage(pagination.current_page + 1)">
                     <span aria-hidden="true">&raquo;</span> 
                 </a>
             </li>
@@ -136,49 +119,49 @@
                     <div class="mb-3">
                       <label for="imageUrl" class="form-label text-success h5 font-weight-bold ">主圖</label>
                       <input type="text" class="form-control" id="imageUrl"
-                             placeholder="請輸入圖片連結" v-model="temp.imageUrl">
+                             placeholder="請輸入圖片連結" v-model="tempProduct.imageUrl">
                     </div>
-                    <div class="mb-3" v-for="(image, key) in temp.imagesUrl" :key="key">
+                    <div class="mb-3" v-for="(image, key) in tempProduct.imagesUrl" :key="key">
                       <label :for="'imagesUrl_'+key" class="form-label">附圖{{ key+1 }}</label>
                       <input type="text" class="form-control" :id="'imagesUrl_'+key"
-                             placeholder="請輸入圖片連結" v-model="temp.imagesUrl[key]">
+                             placeholder="請輸入圖片連結" v-model="tempProduct.imagesUrl[key]">
                     </div>
-                    <img class="img-fluid" :src="temp.imageUrl" alt="">
+                    <img class="img-fluid" :src="tempProduct.imageUrl" alt="">
                   </div>
-                  <button v-if="temp.imagesUrl.length < 5" class="btn btn-outline-primary btn-sm d-block w-100" @click="this.temp.imagesUrl.push('');">
+                  <button v-if="tempProduct.imagesUrl.length < 5" class="btn btn-outline-primary btn-sm d-block w-100" @click="this.tempProduct.imagesUrl.push('');">
                       新增圖片
                   </button>
-                  <button v-if="temp.imagesUrl.length > 0" class="btn btn-outline-danger btn-sm d-block w-100" @click="this.temp.imagesUrl.splice(-1, 1);">
+                  <button v-if="tempProduct.imagesUrl.length > 0" class="btn btn-outline-danger btn-sm d-block w-100" @click="this.tempProduct.imagesUrl.splice(-1, 1);">
                       刪除圖片
                   </button>
                 </div>
                 <div class="col-sm-8">
                   <div class="mb-3">
                     <label for="title" class="form-label">標題</label>
-                    <input id="title" type="text" class="form-control" placeholder="請輸入標題" v-model="temp.title">
+                    <input id="title" type="text" class="form-control" placeholder="請輸入標題" v-model="tempProduct.title">
                   </div>
 
                   <div class="row">
                     <div class="mb-3 col-md-6">
                       <label for="category" class="form-label">分類</label>
                       <input id="category" type="text" class="form-control"
-                             placeholder="請輸入分類" v-model="temp.category">
+                             placeholder="請輸入分類" v-model="tempProduct.category">
                     </div>
                     <div class="mb-3 col-md-6">
                       <label for="price" class="form-label">單位</label>
-                      <input id="unit" type="text" class="form-control" placeholder="請輸入單位" v-model="temp.unit">
+                      <input id="unit" type="text" class="form-control" placeholder="請輸入單位" v-model="tempProduct.unit">
                     </div>
                   </div>
 
                   <div class="row">
                     <div class="mb-3 col-md-6">
                       <label for="origin_price" class="form-label">原價</label>
-                      <input id="origin_price" type="number" min="0" class="form-control" placeholder="請輸入原價" v-model.number="temp.origin_price">
+                      <input id="origin_price" type="number" min="0" class="form-control" placeholder="請輸入原價" v-model.number="tempProduct.origin_price">
                     </div>
                     <div class="mb-3 col-md-6">
                       <label for="price" class="form-label">售價</label>
                       <input id="price" type="number" min="0" class="form-control"
-                             placeholder="請輸入售價" v-model.number="temp.price">
+                             placeholder="請輸入售價" v-model.number="tempProduct.price">
                     </div>
                   </div>
                   <hr>
@@ -186,19 +169,19 @@
                   <div class="mb-3">
                     <label for="description" class="form-label">產品描述</label>
                     <textarea id="description" type="text" class="form-control"
-                              placeholder="請輸入產品描述" v-model="temp.description">
+                              placeholder="請輸入產品描述" v-model="tempProduct.description">
                     </textarea>
                   </div>
                   <div class="mb-3">
                     <label for="content" class="form-label">說明內容</label>
                     <textarea id="content" type="text" class="form-control"
-                              placeholder="請輸入說明內容" v-model="temp.content">
+                              placeholder="請輸入說明內容" v-model="tempProduct.content">
                     </textarea>
                   </div>
                   <div class="mb-3">
                     <div class="form-check">
                       <input id="is_enabled" class="form-check-input" type="checkbox"
-                             :true-value="1" :false-value="0" v-model="temp.is_enabled">
+                             :true-value="1" :false-value="0" v-model="tempProduct.is_enabled">
                       <label class="form-check-label" for="is_enabled">是否啟用</label>
                     </div>
                   </div>
@@ -209,7 +192,7 @@
               <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                 取消
               </button>
-              <button type="button" class="btn btn-primary" @click="update_product(temp.id)">
+              <button type="button" class="btn btn-primary" @click="update_product(tempProduct.id)">
                 確認
               </button>
             </div>
@@ -233,13 +216,13 @@
             </div>
             <div class="modal-body">
               是否刪除
-              <strong class="text-danger">{{ temp.title }}</strong> 商品(刪除後將無法恢復)。
+              <strong class="text-danger">{{ tempProduct.title }}</strong> 商品(刪除後將無法恢復)。
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                 取消
               </button>
-              <button type="button" class="btn btn-danger" @click="delproduct(temp.id)">
+              <button type="button" class="btn btn-danger" @click="delproduct(tempProduct.id)">
                 確認刪除
               </button>
             </div>

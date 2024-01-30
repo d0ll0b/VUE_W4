@@ -1,15 +1,17 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
+const api_url = "https://ec-course-api.hexschool.io/v2";
+const api_path = "dollob_api";
+
+// Modal
 let productModal = null;
 let delproductModal = null;
 
 const app = createApp({
     data(){
     return{
-        api_url: "https://ec-course-api.hexschool.io/v2",
-        api_path: "dollob_api",
         products: [],
-        temp : {
+        tempProduct : {
             imagesUrl: [],
         }, // 用於儲存 "查看細節" Data
         pagination: {},
@@ -34,7 +36,7 @@ const app = createApp({
     },
     methods:{
         checkAdmin(){
-            const api = `${this.api_url}/api/user/check`;
+            const api = `${api_url}/api/user/check`;
             axios.post(api).then((res) => {
                 this.getData()
             }).catch((err) => {
@@ -42,8 +44,8 @@ const app = createApp({
                 window.location = 'index.html';
             })
         },
-        getData(page = 2){
-            const api = `${this.api_url}/api/${this.api_path}/admin/products?page=${page}`;
+        getData(page = 1){
+            const api = `${api_url}/api/${api_path}/admin/products?page=${page}`;
             axios.get(api).then((res) => {
                 const { products, pagination } = res.data;
                 this.products = products;
@@ -56,7 +58,7 @@ const app = createApp({
             switch(flg){
                 case 'new': 
                     this.isNew = true;
-                    this.temp = {
+                    this.tempProduct = {
                         imagesUrl: [],
                     };
                     this.title = "新增";
@@ -64,13 +66,13 @@ const app = createApp({
                     break;
                 case 'edit': 
                     this.isNew = false;
-                    this.temp = { ...item };
-                    this.ShowImagebtn(this.temp);
+                    this.tempProduct = { ...item };
+                    this.ShowImagebtn(this.tempProduct);
                     this.title = "編輯";
                     productModal.show();
                     break;
                 case 'delete': 
-                    this.temp = { ...item };
+                    this.tempProduct = { ...item };
                     delproductModal.show();
                     break;
             }
@@ -78,8 +80,8 @@ const app = createApp({
         Update_product(id){
             let api = '';
             if(this.isNew === true){
-                api = `${this.api_url}/api/${this.api_path}/admin/product`;
-                axios.post(api, { data: this.temp }).then((res) => {
+                api = `${api_url}/api/${api_path}/admin/product`;
+                axios.post(api, { data: this.tempProduct }).then((res) => {
                     alert('新增產品成功!!!');
                     this.getData();
                     productModal.hide();
@@ -87,8 +89,8 @@ const app = createApp({
                     alert(err.data.message);
                 })
             }else{
-                api = `${this.api_url}/api/${this.api_path}/admin/product/${id}`;
-                axios.put(api, { data: this.temp }).then((res) => {
+                api = `${api_url}/api/${api_path}/admin/product/${id}`;
+                axios.put(api, { data: this.tempProduct }).then((res) => {
                     alert('更新產品成功!!!');
                     this.getData();
                     productModal.hide();
@@ -99,7 +101,7 @@ const app = createApp({
         },
         Delete_product(id){
             let api = '';
-            api = `${this.api_url}/api/${this.api_path}/admin/product/${id}`;
+            api = `${api_url}/api/${api_path}/admin/product/${id}`;
             axios.delete(api).then((res) => {
                 alert('刪除產品完成!!!');
                 this.getData();
@@ -108,10 +110,10 @@ const app = createApp({
                 alert(err.data.message);
             })
         },
-        ShowImagebtn(temp){
-            if (!temp.hasOwnProperty('imagesUrl') && !Array.isArray(temp.imagesUrl)) {
-                temp.imagesUrl = [];
-                temp.imagesUrl.push('');
+        ShowImagebtn(tempProduct){
+            if (!tempProduct.hasOwnProperty('imagesUrl') && !Array.isArray(tempProduct.imagesUrl)) {
+                tempProduct.imagesUrl = [];
+                tempProduct.imagesUrl.push('');
             }
             return true;
         }
@@ -130,20 +132,20 @@ app.component('pagination', {
 
 app.component('productModal', {
     template: '#productModal',
-    props:['temp', 'title'],
+    props:['tempProduct', 'title'],
     methods:{
         update_product(id){
             this.$emit('update_product', id)
         },
-        showImage(temp){
-            this.$emit('ShowImagebtn', temp)
+        showImage(tempProduct){
+            this.$emit('ShowImagebtn', tempProduct)
         }
     }
 });
 
 app.component('delProductModal', {
     template: '#delProductModal',
-    props:['temp'],
+    props:['tempProduct'],
     methods:{
         delproduct(id){
             this.$emit('delproduct', id)
